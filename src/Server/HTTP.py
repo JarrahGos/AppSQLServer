@@ -9,9 +9,8 @@ import ssl
 class SecureHTTPServer(HTTPServer):
 
     def __init__(self, server_address, HandlerClass, RequestHandlerClass):
-        BaseServer.__init__(self, server_address, HandlerClass)
         super().__init__(server_address, RequestHandlerClass)
-        HTTPServer.socket = ssl.wrap_socket(HTTPServer.socket)  # TODO: Finish this. 
+        HTTPServer.socket = ssl.wrap_socket(HTTPServer.socket)  # TODO: Finish this.
 
         self.server_bind()
         self.server_activate()

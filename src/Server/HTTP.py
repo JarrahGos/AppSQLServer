@@ -1,53 +1,26 @@
-import sys
-from HTTP.server import HTTPServer
-from HTTP.server import SimpleHTTPRequestHandler
-import HTTP.cookiejar
-import HTTP.cookies
-import socket
-import ssl
-
-class SecureHTTPServer(HTTPServer):
-
-    def __init__(self, server_address, HandlerClass, RequestHandlerClass):
-        super().__init__(server_address, RequestHandlerClass)
-        HTTPServer.socket = ssl.wrap_socket(HTTPServer.socket)  # TODO: Finish this.
-
-        self.server_bind()
-        self.server_activate()
+import falcon
+import mysql
+from src.Server import SQL
 
 
-class SecureHTTPRequestHandler(SimpleHTTPRequestHandler):
-    def setup(self):
-        self.connection = self.request
-        # Convert to python 3
+class RequestHandler:
+    def on_get(self, req, resp):
+        try:
+            resp.body = SQL.query(req.get_param("")) # How will this be represented
+            resp.status = falcon.HTTP_200
+        except:
+            resp.status = falcon.HTTP_400
+        # May be use for a 404 Here.
 
+    def on_post(self, req, resp):
+        try:
+            SQL.enter(req.get_param(""))
+            resp.status = falcon.HTTP_200
+        except mysql:
+            resp.status = falcon.HTTP_400
 
-def test(HandlerClass = SecureHTTPRequestHandler,
-         ServerClass = SecureHTTPServer):
-    server_address = ('', 443)
-    httpd = ServerClass(server_address, HandlerClass)
-    sa = httpd.socket.getsocname()
-    print("serving HTTPS on %s port %s", sa[0], sa[1])
+app = falcon.API()
 
-    httpd.serve_forever()
+requestHandler = RequestHandler()
 
-if __name__ == '__main__':
-    test()
-#
-# HandlerClass = SimpleHTTPRequestHandler
-# ServerClass = HTTPServer
-#
-# Protocol = "HTTPS/1.1"
-#
-# if sys.argv[1:]:
-#     port = int(sys.argv[1])
-# else:
-#     port = 443
-# server_address = ('', port)
-#
-# HandlerClass.protocol_version = Protocol
-# httpd = ServerClass(server_address, HandlerClass)
-#
-# sa = httpd.socket.getsockname()
-# print("Serving HTTP on", sa[0], "port", sa[1], "...")
-# httpd.serve_forever()
+app.add_route("/", requestHandler)

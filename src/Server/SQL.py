@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
+import json
 
 config = {
   'user': 'user',
@@ -31,9 +32,14 @@ def getDB():
         return con
 
 
-def runSQL(sql):
+def query(json):
     db = getDB()
     cur = db.cursor()
-    cur.execute_query(sql)
+    cur.execute_query(json)
     rows = cur.fetchall()
     return rows  # This will not do what I want.
+
+def enter(json):
+    db = getDB()
+    cur = db.cursor()
+    cur.execute(json)

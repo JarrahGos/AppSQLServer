@@ -1,0 +1,17 @@
+{
+  "Database" : "DB Name",
+  "Cookie" : "User Cookie",
+  "Fields" : ["Field1", "Field2", "etc"],
+  "Keys" : [
+    {
+      "Key" : "name",
+      "Value" : "content"
+    }
+  ],
+  "Values" : [
+    {
+      "Key" : "name",
+      "Value" : "content"
+    }
+  ]
+}

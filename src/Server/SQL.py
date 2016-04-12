@@ -6,14 +6,15 @@ config = {
   'user': 'user',
   'password': 'password',
   'host': '127.0.0.1',
-  'database': 'vechicleTrack',
+  'database': '',
   'raise_on_warnings': True,
   'use_pure': False,
 }
 
 
-def getDB():
+def getDB(database):
     # Get a connection to the database.
+    config["Database"] = database
     try:
         con = mysql.connector.connect(**config)
 
@@ -29,17 +30,33 @@ def getDB():
     else:
         con.close()
     finally:
+        config["Database"] = ""
         return con
 
 
-def query(json):
-    db = getDB()
+def query(data):
+    db = getDB(json.loads(data)["Database"])
     cur = db.cursor()
-    cur.execute_query(json)
+    content = json.loads(data)
+    sql = "SELECT " + content["Fields"].split(',')
+    sql += " FROM " + content["Tables"][0]
+    sql += " Where "
+    for key in content["Keys"]:
+        sql += key["Key"] + " = " + key["Value"]
+
+    cur.execute_query(sql)
     rows = cur.fetchall()
     return rows  # This will not do what I want.
 
-def enter(json):
-    db = getDB()
+
+def enter(data):
+    db = getDB(json.loads(data)["Database"])
     cur = db.cursor()
-    cur.execute(json)
+    content = json.loads(data)
+    sql = "INSERT INTO  " + content["Fields"].split(',')
+    sql += " FROM " + content["Tables"][0]
+    sql += " Where "
+    for key in content["Keys"]:
+        sql += key["Key"] + " = " + key["Value"]
+
+    cur.execute(sql)

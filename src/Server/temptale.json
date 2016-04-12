@@ -2,15 +2,16 @@
   "Database" : "DB Name",
   "Cookie" : "User Cookie",
   "Fields" : ["Field1", "Field2", "etc"],
+  "Tables" : ["Table1", "table2", "etc"],
   "Keys" : [
     {
-      "Key" : "name",
+      "Key" : "Table Name",
       "Value" : "content"
     }
   ],
-  "Values" : [
+  "Tests" : [
     {
-      "Key" : "name",
+      "Key" : "Field Name",
       "Value" : "content"
     }
   ]

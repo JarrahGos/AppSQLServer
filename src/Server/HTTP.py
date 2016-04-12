@@ -8,7 +8,7 @@ class RequestHandler:
         try:
             resp.body = SQL.query(req.get_param("")) # How will this be represented
             resp.status = falcon.HTTP_200
-        except:
+        except mysql:
             resp.status = falcon.HTTP_400
         # May be use for a 404 Here.
 

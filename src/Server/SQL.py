@@ -2,17 +2,11 @@ import mysql.connector
 from mysql.connector import errorcode
 import json
 
-config = {
-  'user': 'user',
-  'password': 'password',
-  'host': '127.0.0.1',
-  'database': '',
-  'raise_on_warnings': True,
-  'use_pure': False,
-}
+with open('conf.json') as dataFile:
+    config = json.load(dataFile)
 
 
-def getDB(database):
+def getdb(database):
     # Get a connection to the database.
     config["Database"] = database
     try:
@@ -34,8 +28,8 @@ def getDB(database):
         return con
 
 
-def query(data):
-    db = getDB(json.loads(data)["Database"])
+def query(database, data):
+    db = getdb(database)
     cur = db.cursor()
     content = json.loads(data)
     sql = "SELECT " + content["Fields"].split(',')
@@ -49,13 +43,16 @@ def query(data):
     return rows  # This will not do what I want.
 
 
-def enter(data):
-    db = getDB(json.loads(data)["Database"])
+def enter(database, data):
+    db = getdb(database)
     cur = db.cursor()
     content = json.loads(data)
-    sql = "INSERT INTO  " + content["Fields"].split(',')
-    sql += " FROM " + content["Tables"][0]
-    sql += " Where "
+    sql = "INSERT INTO " + content["Tables"][0]
+    sql += " (" + content["Keys"]["Key"].split(',') + ") "
+    sql += "VALUES (" + content["Keys"]["Value"]
+    if not content["Test"]:
+        sql += " WHERE " + content["Tests"]["Key"] + "=" + content["Tests"]["Value"]
+
     for key in content["Keys"]:
         sql += key["Key"] + " = " + key["Value"]
 

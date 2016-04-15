@@ -1,12 +1,12 @@
 import falcon
-import mysql
+import psycopg2
 from src.Server import SQL
 
 
 class RequestHandler:
     def on_get(self, req, resp):
         try:
-            resp.body = SQL.query(req.get_param("")) # How will this be represented
+            resp.body = SQL.query(req.get_param("URL", "BODY"))  # How will this be represented
             resp.status = falcon.HTTP_200
         except mysql:
             resp.status = falcon.HTTP_400
@@ -14,7 +14,7 @@ class RequestHandler:
 
     def on_post(self, req, resp):
         try:
-            SQL.enter(req.get_param(""))
+            SQL.enter(req.get_param("URL", "BODY"))
             resp.status = falcon.HTTP_200
         except mysql:
             resp.status = falcon.HTTP_400

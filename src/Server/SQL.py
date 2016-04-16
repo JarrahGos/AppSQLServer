@@ -1,6 +1,9 @@
-import mysql.connector
-from mysql.connector import errorcode
+import psycoph2
 import json
+# TODO: Convert this to use postgresql.
+# TODO: Convert this to use named paramiters within SQL
+# http://initd.org/psycopg/docs/usage.html
+
 
 with open('conf.json') as dataFile:
     config = json.load(dataFile)
@@ -10,9 +13,9 @@ def getdb(database):
     # Get a connection to the database.
     config["Database"] = database
     try:
-        con = mysql.connector.connect(**config)
+        con = psycoph2.connect(**config)
 
-    except mysql.connector.Error as error:
+    except psycoph2.connector.Error as error:
         if error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Login failed, user or password incorrect.\n")
         elif error.errno == errorcode.ER_BAD_DB_ERROR:

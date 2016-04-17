@@ -1,4 +1,5 @@
 import psycoph2
+from psycoph2 import errorcode
 import json
 # TODO: Convert this to use postgresql.
 # TODO: Convert this to use named paramiters within SQL
@@ -35,13 +36,14 @@ def query(database, data):
     db = getdb(database)
     cur = db.cursor()
     content = json.loads(data)
-    sql = "SELECT " + content["Fields"].split(',')
-    sql += " FROM " + content["Tables"][0]
-    sql += " Where "
-    for key in content["Keys"]:
-        sql += key["Key"] + " = " + key["Value"]
+    sql = "SELECT " + "%s, "*(len(content["Fields"]))
+    sql += " FROM " + "%s, "*(len(content["Tables"]))
+    if content["Keys"]:
+        sql += "WHERE " + "%s = %s AND "*(len(content["Keys"])-1)
+        sql += "%s = %s"
 
-    cur.execute_query(sql)
+    cur.execute_query(sql, content["Fields"], content["Tables"],
+                      content["Keys"])
     rows = cur.fetchall()
     return rows  # This will not do what I want.
 

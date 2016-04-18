@@ -1,5 +1,5 @@
-import psycoph2
-from psycoph2 import errorcode
+import psycopg2
+#from psycopg2.errorcodes import errorcode
 import json
 # TODO: Convert this to use postgresql.
 # TODO: Convert this to use named paramiters within SQL
@@ -17,9 +17,9 @@ def getdb(database):
         con = psycoph2.connect(**config)
 
     except psycoph2.connector.Error as error:
-        if error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        if error.errno == psycopg2.errorcodes.ER_ACCESS_DENIED_ERROR:
             print("Login failed, user or password incorrect.\n")
-        elif error.errno == errorcode.ER_BAD_DB_ERROR:
+        elif error.errno == psycopg2.errorcodes.ER_BAD_DB_ERROR:
             print("Database Does not exist\n")
         else: print(error)
         if con is not None:

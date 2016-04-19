@@ -12,11 +12,11 @@ with open('conf.json') as dataFile:
 
 def getdb(database):
     # Get a connection to the database.
-    config["Database"] = database
+    config["database"] = database
     try:
-        con = psycoph2.connect(**config)
+        con = psycopg2.connect(**config)
 
-    except psycoph2.connector.Error as error:
+    except psycopg2 as error:
         if error.errno == psycopg2.errorcodes.ER_ACCESS_DENIED_ERROR:
             print("Login failed, user or password incorrect.\n")
         elif error.errno == psycopg2.errorcodes.ER_BAD_DB_ERROR:
@@ -45,6 +45,7 @@ def query(database, data):
     cur.execute_query(sql, content["Fields"], content["Tables"],
                       content["Keys"])
     rows = cur.fetchall()
+    db.close()
     return rows  # This will not do what I want.
 
 
@@ -62,3 +63,5 @@ def enter(database, data):
         sql += key["Key"] + " = " + key["Value"]
 
     cur.execute(sql)
+    cur.commit()
+    db.close()

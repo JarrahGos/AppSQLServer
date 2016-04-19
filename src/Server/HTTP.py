@@ -1,12 +1,13 @@
 import falcon
 import psycopg2
 import SQL
+from wsgiref import simple_server
 
 class RequestHandler:
     def on_get(self, req, resp):
         try:
             print("ON_GET")
-            resp.body = SQL.query(req.get_param("URL", "BODY"))  # How will this be represented
+            resp.body = SQL.query(req.path, req.stream)  # How will this be represented
             resp.status = falcon.HTTP_200
         except psycopg2:
             resp.status = falcon.HTTP_400
@@ -18,7 +19,7 @@ class RequestHandler:
     def on_post(self, req, resp):
         try:
             print("ON_POST")
-            SQL.enter(req.get_param("URL", "BODY"))
+            SQL.enter(req.path, req.stream)
             resp.status = falcon.HTTP_200
         except psycopg2:
             resp.status = falcon.HTTP_400
@@ -31,3 +32,7 @@ requestHandler = RequestHandler()
 
 app.add_route("/", requestHandler)
 app.add_route("/VehicleTrack", requestHandler)
+
+if __name__ == '__main__':
+    httpd = simple_server.make_server('0.0.0.0', 80, app)
+    httpd.serve_forever()

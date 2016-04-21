@@ -34,5 +34,5 @@ app.add_route("/", requestHandler)
 app.add_route("/VehicleTrack", requestHandler)
 
 if __name__ == '__main__':
-    httpd = simple_server.make_server('0.0.0.0', 80, app)
+    httpd = simple_server.make_server('0.0.0.0', 8000, app)
     httpd.serve_forever()
